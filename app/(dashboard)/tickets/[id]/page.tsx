@@ -1,6 +1,17 @@
 import { Ticket } from "@/utils/interfaces";
 import { notFound } from "next/navigation";
 
+export async function generateMetadata({ params }: any) {
+  const id = params.id
+
+  const res = await fetch(`http://localhost:4000/tickets/${id}`)
+  const ticket = await res.json()
+ 
+  return {
+    title: `Helpdesk | ${ticket.title}`
+  }
+}
+
 export const generateStaticParams = async () => {
   try {
     const res = await fetch("http://localhost:4000/tickets");
@@ -23,15 +34,20 @@ const getTicket = async (id: string) => {
       },
     });
 
+    if(!res.ok){
+      return notFound();
+    }
+
     return res.json();
   } catch (error) {
-    notFound()
+    console.log("error", error);
+    return notFound();
   }
 };
 
 export default async function TicketDetails({ params }: any) {
-  // const id = params.id
-  const ticket = await getTicket(params.id);
+  const id = params.id
+  const ticket = await getTicket(id);
 
   return (
     <main>
