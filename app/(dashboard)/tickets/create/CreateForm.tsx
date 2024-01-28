@@ -21,8 +21,6 @@ export default function CreateForm() {
       body,
       priority,
     };
-    console.log("url is", `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/tickets`);
-    console.log("public url is",process.env.NEXT_PUBLIC_BASE_URL );
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/tickets`, {
       method: "POST",
