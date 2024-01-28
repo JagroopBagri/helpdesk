@@ -15,11 +15,12 @@ export default function Signup() {
     setError("");
     try {
       const supabase: SupabaseClient = createClientComponentClient();
+
       const {error} = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${location.origin}/api/v1/auth/callback`
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/auth/callback`
         }
       });
       if(error){
