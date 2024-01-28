@@ -23,8 +23,8 @@ export default function DeleteButton({ id }: any) {
       if (json.error) {
         console.error("Error deleting ticket", json.error);
       } else {
-        router.refresh();
         router.push("/tickets");
+        router.refresh();
       }
     } catch (error) {
       console.error("Error deleting ticket", error);
