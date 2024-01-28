@@ -22,7 +22,7 @@ export default function CreateForm() {
       priority,
     };
 
-    const res = await fetch("http://localhost:3000/api/v1/tickets", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/tickets`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newTicket),
