@@ -16,11 +16,11 @@ export async function generateMetadata({ params }: any) {
       .single();
 
     if (resp.error) {
-      console.error("error retrieving ticket");
+      console.error("error retrieving ticket", resp.error);
       return [];
     }
     return {
-      title: `Helpdesk | ${resp.ticket.title || "Title not found"} `,
+      title: `Helpdesk | ${resp.data.title || "Title not found"} `,
     };
   } catch (error) {
     return { title: "Helpdesk | Ticket not found" };
@@ -38,7 +38,7 @@ const getTicket = async (id: string) => {
       .single();
 
     if (resp.error) {
-      console.error("error retrieving ticket");
+      console.error("error retrieving ticket", resp.error);
       return notFound();
     }
     return resp.data;

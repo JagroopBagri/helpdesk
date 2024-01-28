@@ -21,6 +21,8 @@ export default function CreateForm() {
       body,
       priority,
     };
+    console.log("url is", `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/tickets`);
+    console.log("public url is",process.env.NEXT_PUBLIC_BASE_URL );
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/tickets`, {
       method: "POST",
@@ -30,12 +32,12 @@ export default function CreateForm() {
 
     const json = await res.json();
     setIsLoading(false);
-    router.refresh();
     if (json.error) {
       console.error(json.error);
     }
     if (json.data) {
       router.push("/tickets");
+      router.refresh();
     }
   };
 
