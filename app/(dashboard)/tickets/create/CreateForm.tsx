@@ -10,7 +10,8 @@ export default function CreateForm() {
   const [body, setBody] = useState("");
   const [priority, setPriority] = useState("low");
   const [isLoading, setIsLoading] = useState(false);
-
+  
+  // handle add new ticket request
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
@@ -19,20 +20,23 @@ export default function CreateForm() {
       title,
       body,
       priority,
-      user_email: "testing@test.com",
     };
 
-    const res = await fetch("http://localhost:4000/tickets", {
+    const res = await fetch("http://localhost:3000/api/v1/tickets", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newTicket),
     });
 
-    if (res.status === 201) {
-      router.refresh();
+    const json = await res.json();
+    setIsLoading(false);
+    router.refresh();
+    if (json.error) {
+      console.error(json.error);
+    }
+    if (json.data) {
       router.push("/tickets");
     }
-    setIsLoading(false);
   };
 
   return (

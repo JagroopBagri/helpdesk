@@ -1,58 +1,70 @@
-import { Ticket } from "@/utils/interfaces";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+import DeleteButton from "./DeleteButton";
 
 export async function generateMetadata({ params }: any) {
-  const id = params.id
+  const id = params.id;
 
-  const res = await fetch(`http://localhost:4000/tickets/${id}`)
-  const ticket = await res.json()
- 
-  return {
-    title: `Helpdesk | ${ticket.title}`
+  try {
+    const supabase = createServerComponentClient({ cookies });
+
+    const resp: any = await supabase
+      .from("Tickets")
+      .select()
+      .eq("id", id)
+      .single();
+
+    if (resp.error) {
+      console.error("error retrieving ticket");
+      return [];
+    }
+    return {
+      title: `Helpdesk | ${resp.ticket.title || "Title not found"} `,
+    };
+  } catch (error) {
+    return { title: "Helpdesk | Ticket not found" };
   }
 }
 
-export const generateStaticParams = async () => {
-  try {
-    const res = await fetch("http://localhost:4000/tickets");
-
-    const tickets: Ticket[] = await res.json();
-
-    return tickets.map((ticket) => ({
-      id: ticket.id,
-    }));
-  } catch (error) {
-    return [];
-  }
-};
-
 const getTicket = async (id: string) => {
   try {
-    const res = await fetch(`http://localhost:4000/tickets/${id}`, {
-      next: {
-        revalidate: 60,
-      },
-    });
+    const supabase = createServerComponentClient({ cookies });
 
-    if(!res.ok){
+    const resp: any = await supabase
+      .from("Tickets")
+      .select()
+      .eq("id", id)
+      .single();
+
+    if (resp.error) {
+      console.error("error retrieving ticket");
       return notFound();
     }
-
-    return res.json();
+    return resp.data;
   } catch (error) {
-    console.log("error", error);
     return notFound();
   }
 };
 
 export default async function TicketDetails({ params }: any) {
-  const id = params.id
+  const id = params.id;
   const ticket = await getTicket(id);
+
+  const supabase = createServerComponentClient({cookies});
+
+  const resp: any = await supabase.auth.getSession();
+
 
   return (
     <main>
       <nav>
         <h2>Ticket Details</h2>
+        <div className="ml-auto">
+          {resp.data?.session?.user?.email === ticket.user_email && (
+            <DeleteButton id={ticket.id} />
+          )}
+        </div>
       </nav>
       <div className="card">
         <h3>{ticket.title}</h3>
@@ -63,5 +75,6 @@ export default async function TicketDetails({ params }: any) {
         </div>
       </div>
     </main>
-  );
+  )
 }
+

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import TicketList from "./TicketList";
 import Loading from "../loading";
 import Link from "next/link";
+import { IoAddCircleOutline } from "react-icons/io5";
 
 export default function Tickets() {
   return (
@@ -14,7 +15,10 @@ export default function Tickets() {
           </p>
         </div>
         <Link href="/tickets/create" className="ml-auto">
-          <button className="btn-primary">New Ticket</button>
+          <button className="btn-primary">
+            <IoAddCircleOutline /> 
+            New Ticket
+          </button>
         </Link>
       </nav>
       <Suspense fallback={<Loading />}>
